@@ -69,13 +69,26 @@ domain_percentages = (
     data.groupby("Domain")["Score"].mean() * 100
 ).round(2).reset_index()
 
+# getting the single domain value
 filtered_data = data[data["Domain"] == "Anxiety"]
-percentage = (filtered_data["Score"].mean() * 100).round(2)
-print(percentage)
+anxiety_percentage = (filtered_data["Score"].mean() * 100).round(2)
+print(anxiety_percentage)
 
 subdomain_percentages = (
     data.groupby("Sub Domain")["Score"].mean() * 100
 ).round(2).reset_index()
+
+# getting the single domain value
+muscular_tension_subdomain_data = data[data["Sub Domain"] == "Muscular Tension"]
+situational_anxiety_subdomain_data = data[data["Sub Domain"] == "Situational Anxiety"]
+
+muscular_tension_percentage = (muscular_tension_subdomain_data["Score"].mean() * 100).round(2)
+situational_anxiety_percentage = (situational_anxiety_subdomain_data["Score"].mean() * 100).round(2)
+
+print(muscular_tension_percentage)
+print(situational_anxiety_percentage)
+
+
 
 print(domain_percentages)
 print(subdomain_percentages)
@@ -93,10 +106,12 @@ plt.savefig("subdomain_pie_chart.png")
 plt.close()
 
 
-def get_anxiety_recommendation(anxiety_percentage, sheet_name="Recommendations"):
+def get_recommendations(percentage, sheet_name="Recommendations"):
 
     # Read the recommendations from the Excel sheet
     df = pd.read_excel("data1.xlsx",sheet_name=sheet_name)
+            
+            # domain_df = df[df["Domain"] == domain]
     # df["Range"] = pd.to_numeric(df["Range"])
        # Split the "Range" column into lower and upper bounds
     df[["Lower", "Upper"]] = df["Range"].str.split("-", expand=True)
@@ -104,9 +119,9 @@ def get_anxiety_recommendation(anxiety_percentage, sheet_name="Recommendations")
 
     # Find the appropriate recommendation based on the anxiety percentage
     for index, row in df.iterrows():
-        # if anxiety_percentage < row["Range"]:
-        # if row["Lower Range"] <= anxiety_percentage <= row["Upper Range"]:
-        if row["Lower"] <= anxiety_percentage <= row["Upper"]:
+        # if percentage < row["Range"]:
+        # if row["Lower Range"] <= percentage <= row["Upper Range"]:
+        if row["Lower"] <= percentage <= row["Upper"]:
             return row["Scale"]
 
     # If no matching recommendation is found, return a default value
@@ -114,10 +129,22 @@ def get_anxiety_recommendation(anxiety_percentage, sheet_name="Recommendations")
 
 # Example usage
 
-recommendation = get_anxiety_recommendation(percentage)
-print(f"The recommended anxiety level for {percentage}% anxiety is: {recommendation}")
+df = pd.read_excel("data1.xlsx", sheet_name="Recommendations")
 
+    # Find unique domain names
+domains = df["Domain"].unique()
+print(domains)
 
+percentages_for_domains = {
+    "Anxiety": anxiety_percentage, 
+    "Muscle tension": muscular_tension_percentage,
+    "Situational Anxiety": situational_anxiety_percentage
+}
+
+recommendation = get_recommendations(muscular_tension_percentage)
+print(f"The recommended anxiety level for {anxiety_percentage}% anxiety is: {recommendation}")
+
+#############################################################################################################
 # Create PDF report
 pdf = FPDF()
 
