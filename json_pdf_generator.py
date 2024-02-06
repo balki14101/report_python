@@ -1,96 +1,7 @@
 from fpdf import FPDF
 import json
 import matplotlib.pyplot as plt
-
-personalDetails = '''{
-    "PersonId": "P1",
-    "Name": "Rohit",
-    "Age": 20    
-}
-'''
-response = '''
-{
-    "PersonId": "P1",
-    "Name": "Rohit",
-    "CompSurveyID": "CS001",
-    "SurveyName": "Mental Health",
-    "Question": [
-        {
-            "QuestionID": "QN001",
-            "SurveyQuestionNo": "1",
-            "Score": 1,
-            "Layer": "L1",
-            "Domain": "Anxiety",
-            "Subdomain": "Worrying",
-            "Section": "Section1"
-        },
-        {
-            "QuestionID": "QN002",
-            "SurveyQuestionNo": "2",
-            "Score": 1,
-            "Layer": "L1",
-            "Domain": "Anxiety",
-            "Subdomain": "Muscular Tension",
-            "Section": "Section1"
-        },
-        {
-            "QuestionID": "QN003",
-            "SurveyQuestionNo": "2",
-            "Score": 1,
-            "Layer": "L1",
-            "Domain": "Depression",
-            "Subdomain": "Self Confidence",
-            "Section": "Section1"
-        },
-        {
-            "QuestionID": "QN004",
-            "SurveyQuestionNo": "2",
-            "Score": 0,
-            "Layer": "L1",
-            "Domain": "Depression",
-            "Subdomain": "Self Confidence",
-            "Section": "Section1"
-        }
-    ]
-}
-'''
-
-recommendation = '''
-{
-    "scale": [
-        {
-            "LevelName": "Anxiety",
-            "Range": "0%",
-            "Rating": "nothing"
-        },
-        {
-            "LevelName": "Anxiety",
-            "Range": "0-25%",
-            "Rating": "normal"
-        },
-        {
-            "LevelName": "Anxiety",
-            "Range": "50-75%",
-            "Rating": "moderate"
-        },
-        {
-            "LevelName": "Anxiety",
-            "Range": "75-100%",
-            "Rating": "severe"
-        },
-        {
-            "LevelName": "Muscular Tension",
-            "Range": ">63%",
-            "Rating": "high"
-        },
-        {
-            "LevelName": "Self Confidence",
-            "Range": ">63%",
-            "Rating": "high"
-        }
-    ]
-}
-'''
+from data import personalDetails,response,recommendation
 
 user_details = json.loads(personalDetails)
 
@@ -152,8 +63,8 @@ ax.legend()
 
 
 # plot
-# Rotate y-axis labels for better readability
-plt.yticks(rotation=45, ha='right')  # Rotate labels 45 degrees clockwise and align to the right
+# Rotate y-axis labels
+plt.yticks(rotation=45, ha='right')  # Rotate labels 45 degrees
 plt.savefig("domain_barchart.png")
 plt.close()
 
@@ -173,14 +84,14 @@ ax.set_title('SubDomain - Analysis')
 ax.legend()
 
 # plot
-# Rotate y-axis labels for better readability
-plt.yticks(rotation=45, ha='right')  # Rotate labels 45 degrees clockwise and align to the right
+# Rotate y-axis labels
+plt.yticks(rotation=45, ha='right')  # Rotate labels 45 degrees
 plt.savefig("subdomain_barchart.png")
 plt.close()
 
 
 
-
+#recommandation mapping
 #combine domain and subdomains percentages    
 all_category = {**domain_with_percentages,**sub_domain_with_percentages}   
 print(all_category) 
@@ -224,53 +135,53 @@ for i in recommendation_data["scale"]:
 
 print(final_recommendations,end="\n \n")  
 
-
-def create_pdf(content_dict, filename):
-    # Create instance of FPDF class
-    pdf = FPDF()
+# #generate pdf 
+# def create_pdf(content_dict, filename):
+#     # Create instance of FPDF class
+#     pdf = FPDF()
     
     
-# Page 1: General Information
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Survey Header", ln=True, align="C")
-    pdf.ln(10)
-    pdf.cell(200, 10, txt=f"Username: {user_details["Name"]}, Age: {user_details["Age"]}", ln=True, align="L")
-    pdf.ln(10)
+# # Page 1: General Information
+#     pdf.add_page()
+#     pdf.set_font("Arial", size=12)
+#     pdf.cell(200, 10, txt="Survey Header", ln=True, align="C")
+#     pdf.ln(10)
+#     pdf.cell(200, 10, txt=f"Username: {user_details["Name"]}, Age: {user_details["Age"]}", ln=True, align="L")
+#     pdf.ln(10)
 
-# Page 2: Domain Percentage with Pie Chart
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Percentage of Correct Answers by Domain", ln=True, align="C")
-    pdf.ln(10)
-    pdf.image("domain_barchart.png", x=45, y=20, w=120)
+# # Page 2: Domain Percentage with Pie Chart
+#     pdf.add_page()
+#     pdf.set_font("Arial", size=12)
+#     pdf.cell(200, 10, txt="Percentage of Correct Answers by Domain", ln=True, align="C")
+#     pdf.ln(10)
+#     pdf.image("domain_barchart.png", x=45, y=20, w=120)
 
 
-# Page 3: Subdomain Percentage with Pie Chart
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Percentage of Correct Answers by Subdomain", ln=True, align="C")
-    pdf.ln(10)
-    pdf.image("subdomain_barchart.png", x=45, y=20, w=120)
+# # Page 3: Subdomain Percentage with Pie Chart
+#     pdf.add_page()
+#     pdf.set_font("Arial", size=12)
+#     pdf.cell(200, 10, txt="Percentage of Correct Answers by Subdomain", ln=True, align="C")
+#     pdf.ln(10)
+#     pdf.image("subdomain_barchart.png", x=45, y=20, w=120)
 
     
-# Page 4: recommendation
-    pdf.add_page()
-    pdf.set_font("Arial", style='B',size=16)
-    pdf.cell(200, 10, txt="Survey Report", ln=True, align="C")
-    pdf.ln(10)
+# # Page 4: recommendation
+#     pdf.add_page()
+#     pdf.set_font("Arial", style='B',size=16)
+#     pdf.cell(200, 10, txt="Survey Report", ln=True, align="C")
+#     pdf.ln(10)
 
-    pdf.set_font("Arial", size=12)
+#     pdf.set_font("Arial", size=12)
 
-    for title, text in content_dict.items():
-        pdf.cell(200, 6, txt=title, ln=True)
-        pdf.multi_cell(0, 6, txt=text)
-        pdf.ln(5)
+#     for title, text in content_dict.items():
+#         pdf.cell(200, 6, txt=title, ln=True)
+#         pdf.multi_cell(0, 6, txt=text)
+#         pdf.ln(5)
     
-    # Save the PDF to a file
-    pdf.output(filename)
+#     # Save the PDF to a file
+#     pdf.output(filename)
 
 
-create_pdf(final_recommendations, "final_survey_report.pdf")
+# create_pdf(final_recommendations, "final_survey_report.pdf")
 
   
